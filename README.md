@@ -1,91 +1,157 @@
-# StockFlow - SaaS Inventory Management System (MVP v0.1)
+# StockFlow
 
-StockFlow is a focused, multi-tenant inventory management system built with the **MERN Stack** (MongoDB, Express, React, Node.js) strictly according to the 6-Hour MVP PRD specifications.
-
----
-
-## 1. Core Feature Matrix
-
-| Feature ID | Scope Description | Status |
-| :--- | :--- | :--- |
-| **FR-1** | **Signup & Login**: Email, password, confirm password, organization name, bcrypt hashing, JWT authentication. | Complete |
-| **FR-2** | **Organization Context**: Every tenant is strictly isolated by `organizationId`. Zero cross-tenant data leakage. | Complete |
-| **FR-3** | **Product Model**: ID, organization ID, Name, SKU (unique per org), Description, Quantity on Hand, Cost Price, Selling Price, Low Stock Threshold, Timestamps, and Last Updated By. | Complete |
-| **FR-4** | **Product CRUD**: Add product modal, products table list with search filter, edit form, delete with confirmation modal dialog. | Complete |
-| **FR-5** | **Simple Stock Updates**: Direct edit form plus inline/modal stock adjustment control (`+/- N units` with note), storing `lastUpdatedBy` and timestamp. | Complete |
-| **FR-6** | **Dashboard Overview**: Summary cards (Total Products, Total Units on Hand, Low Stock Alerts count) and Low Stock Items table with effective threshold resolution. | Complete |
-| **FR-7** | **Global Settings**: Organization-level default low stock threshold setting (default: 5) applied when a product's threshold is empty. | Complete |
+StockFlow is a multi-tenant inventory management web application built on the MERN stack (MongoDB, Express, React, Node.js). It is designed for small to mid-sized businesses to manage product catalogs, track stock levels in real time, configure low-stock alerts, and perform quick inventory adjustments.
 
 ---
 
-## 2. Technical Stack
+## Features
 
-- **Backend**: Node.js, Express.js, Mongoose / MongoDB Atlas, JWT, bcryptjs.
-- **Frontend**: React 18, Vite, Tailwind CSS, Lucide SVG icons, Axios, React Router v6.
-- **Styling & Color Palette**: Modern flat design palette using White (`#FFFFFF`), Sunset Orange (`#FF5841`), and Red-Violet (`#C53678`), standard rounded corners, zero emojis, zero em dashes, zero AI watermarks.
+- **Multi-Tenant Organization Scoping**: Data is strictly isolated per organization using indexed tenant IDs, preventing cross-tenant access.
+- **Authentication and Security**: User registration and login powered by JSON Web Tokens (JWT) and bcrypt password hashing.
+- **Product Management**: Full CRUD operations for products with SKU uniqueness per organization, pricing details (cost and selling prices), and real-time search.
+- **Quick Stock Adjustments**: Fast stock addition or deduction with an optional reason note and automatic audit logging (tracking user ID and timestamp).
+- **Inventory Dashboard**: At-a-glance summary cards showing total products, total stock units on hand, and active low-stock alerts with a dedicated low-stock warning table.
+- **Configurable Low-Stock Thresholds**: Individual product threshold settings with an organization-level fallback threshold in settings.
 
 ---
 
-## 3. Getting Started
+## Tech Stack
 
-### Prerequisites
-- Node.js (v18+ or v22+)
-- npm (v9+)
+### Frontend
+- **React 18** with **Vite** for fast client-side development and building
+- **Tailwind CSS** for clean, responsive UI styling
+- **React Router v6** for client-side routing and protected routes
+- **Lucide React** for clean SVG iconography
+- **Axios** with request interceptors for token handling and 401 redirect logic
 
-### Installation
-Dependencies are already installed. If reinstalling from scratch:
-```bash
-# Install root dependencies
-npm install
+### Backend
+- **Node.js** and **Express.js** for RESTful API architecture
+- **MongoDB** and **Mongoose** with compound indexing (`organizationId` + `sku`)
+- **JSON Web Tokens (JWT)** for stateless session management
+- **bcryptjs** for secure password hashing
+- **CORS** and **dotenv** for cross-origin security and environment configuration
 
-# Install server dependencies
-cd server && npm install && cd ..
+---
 
-# Install client dependencies
-cd client && npm install && cd ..
+## Project Structure
+
+```
+wexa.ai-assignment/
+├── client/                 # React frontend (Vite)
+│   ├── public/             # Static assets
+│   ├── src/
+│   │   ├── api/            # Axios API client and interceptors
+│   │   ├── components/     # Reusable UI components (Modals, Layout, Navbar)
+│   │   ├── context/        # Auth context provider
+│   │   ├── pages/          # Dashboard, Products, Settings, Login, Signup
+│   │   └── App.jsx         # App router and protected route wrappers
+│   └── package.json
+├── server/                 # Express REST API
+│   ├── src/
+│   │   ├── config/         # Database connection setup
+│   │   ├── middleware/     # JWT authentication and validation middleware
+│   │   ├── models/         # Mongoose schemas (Organization, User, Product)
+│   │   ├── routes/         # Express route handlers (auth, products, dashboard, settings)
+│   │   └── index.js        # Server entry point
+│   └── package.json
+├── package.json            # Root scripts for running client and server together
+└── README.md
 ```
 
 ---
 
-## 4. Running the Application
+## Getting Started
 
-### Option A: Run Full Stack Simultaneously (Recommended)
-From the project root:
+### Prerequisites
+- Node.js (v18.x or later)
+- npm (v9.x or later)
+- MongoDB instance (MongoDB Atlas or local MongoDB)
+
+### Installation
+
+1. Clone the repository:
+   ```bash
+   git clone <your-repo-url>
+   cd wexa.ai-assignment
+   ```
+
+2. Install dependencies for root, server, and client:
+   ```bash
+   npm install
+   cd server && npm install
+   cd ../client && npm install
+   cd ..
+   ```
+
+3. Configure environment variables:
+   Create a `.env` file in the `server` directory:
+   ```env
+   PORT=5000
+   MONGODB_URI=your_mongodb_atlas_connection_string
+   JWT_SECRET=your_jwt_secret_key
+   ```
+
+   (Optional) If pointing the client directly to a custom backend URL in production, create a `.env` in the `client` directory:
+   ```env
+   VITE_API_URL=http://localhost:5000/api
+   ```
+
+---
+
+## Running the Application
+
+### Development Mode (Both Frontend and Backend)
+Run both the Express server and Vite development server with a single command from the root directory:
 ```bash
 npm run dev
 ```
+
 - Frontend: `http://localhost:3000`
 - Backend API: `http://localhost:5000`
 
-### Option B: Run Services Individually
-In terminal 1 (Server):
+### Running Individually
+
+To run the backend server only:
 ```bash
 cd server
 npm run dev
 ```
 
-In terminal 2 (Client):
+To run the frontend client only:
 ```bash
 cd client
 npm run dev
 ```
 
-### Option C: Production Standalone Server
-The client is pre-built into `client/dist`. You can run the entire unified app directly from the server:
-```bash
-cd server
-npm start
-```
-Access the complete application at `http://localhost:5000`.
+---
+
+## API Endpoints
+
+### Authentication
+- `POST /api/auth/signup` - Register a new organization and admin account
+- `POST /api/auth/login` - Authenticate user and receive JWT token
+- `GET /api/auth/me` - Get current user profile and organization details
+
+### Products
+- `GET /api/products` - List all products for the tenant (supports `?search=` filter)
+- `POST /api/products` - Create a new product
+- `GET /api/products/:id` - Fetch single product details
+- `PUT /api/products/:id` - Update existing product information
+- `DELETE /api/products/:id` - Delete product
+- `PATCH /api/products/:id/stock` - Quick stock increment or decrement with notes
+
+### Dashboard & Analytics
+- `GET /api/dashboard/stats` - Total products, total units on hand, and low stock count
+- `GET /api/dashboard/low-stock` - List of products below effective threshold
+
+### Settings
+- `GET /api/settings` - Get organization settings (default low stock threshold)
+- `PUT /api/settings` - Update default low stock threshold
 
 ---
 
-## 5. Demo Credentials
+## Database Design Notes
 
-You can sign up a brand new organization via the **Signup** screen or use the pre-configured demo account:
-
-- **Email**: `demo@stockflow.local`
-- **Password**: `password123`
-- **Organization**: `Acme Retail Store`
-*(You can also use the **Create an account** link on the login page to register any new organization).*
-
+- Multi-tenancy is enforced on every query by scoping with `organizationId`.
+- A compound unique index `{ organizationId: 1, sku: 1 }` guarantees that SKU codes are unique within an organization while allowing different organizations to use standard SKU conventions without conflicts.
+- Stock adjustments validate against negative total quantities on hand before committing updates.
