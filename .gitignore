@@ -1,0 +1,30 @@
+# Dependencies (root, client, server, and all subdirectories)
+node_modules/
+**/node_modules/
+
+# Environment Variables & Secrets (all .env files, keeping .env.example)
+.env
+.env.*
+**/.env
+**/.env.*
+!.env.example
+!**/.env.example
+
+# Build and Production Artifacts
+dist/
+**/dist/
+build/
+**/build/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+**/*.log
+
+# OS & Editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
